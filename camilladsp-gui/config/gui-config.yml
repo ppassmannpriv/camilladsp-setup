@@ -1,0 +1,219 @@
+---
+hide_capture_samplerate: false
+hide_silence: false
+hide_capture_device: false
+hide_playback_device: false
+hide_rate_monitoring: false
+hide_multithreading: false
+apply_config_automatically: false
+status_update_interval: 100
+volume_range: 50
+volume_max: 0
+custom_shortcuts:
+  - section: "Subs"
+    description: |
+      Post X-Over gain stage!
+      Ensure Gain Filters are set-up correctly and in your pipeline!
+
+      Recommended settings:
+      Gain: 0dB
+      Limiter: -1dB
+      
+      Delay maths:
+      Distance = time (ms) x 0,343 m/ms
+      Time = Distance (m) / 0,343 m/ms
+      Rule of thumb: 50ms x 0,343 m/ms = 17,15m
+      For 4pt audio keep in mind that your distance is the delta of furthest point-source to stage and your sweet-spot to stage!
+
+    shortcuts:
+      - name: "Subs Gain (dB)"
+        config_elements:
+          - path: [ "filters", "Sub Gain", "parameters", "gain" ]
+        range_from: -32
+        range_to: 12
+        step: 0.1
+      - name: "Subs Mute"
+        config_elements:
+          - path: [ "filters", "Sub Gain", "parameters", "mute" ]
+        type: "boolean"
+      - name: "Subs Phase Inversion"
+        config_elements:
+          - path: [ "filters", "Sub Gain", "parameters", "inverted" ]
+        type: "boolean"
+      - name: "Subs Limiter"
+        config_elements:
+          - path: [ "filters", "Sub Limiter", "parameters", "clip_limit" ]
+        range_from: -12
+        range_to: -0.1
+        step: 0.1
+      - name: "Subs Delay"
+        config_elements:
+          - path: [ "filters", "Sub Delay", "parameters", "delay" ]
+        range_from: 0
+        range_to: 100
+        step: 1
+
+  - section: "Kicks"
+    description: |
+      Post X-Over gain stage!
+      Ensure Gain Filters are set-up correctly and in your pipeline!
+
+      Recommended settings:
+      Gain: 0dB
+      Limiter: -1dB
+      
+      Delay maths:
+      Distance = time (ms) x 0,343 m/ms
+      Time = Distance (m) / 0,343 m/ms
+      Rule of thumb: 50ms x 0,343 m/ms = 17,15m
+      For 4pt audio keep in mind that your distance is the delta of furthest point-source to stage and your sweet-spot to stage!
+
+    shortcuts:
+      - name: "Kicks Gain (dB)"
+        config_elements:
+          - path: [ "filters", "Kick Gain", "parameters", "gain" ]
+        range_from: -32
+        range_to: 12
+        step: 0.1
+      - name: "Kicks Mute"
+        config_elements:
+          - path: [ "filters", "Kick Gain", "parameters", "mute" ]
+        type: "boolean"
+      - name: "Kicks Phase Inversion"
+        config_elements:
+          - path: [ "filters", "Kick Gain", "parameters", "inverted" ]
+        type: "boolean"
+      - name: "Kicks Limiter"
+        config_elements:
+          - path: [ "filters", "Kick Limiter", "parameters", "clip_limit" ]
+        range_from: -12
+        range_to: -0.1
+        step: 0.1
+      - name: "Kicks Delay"
+        config_elements:
+          - path: [ "filters", "Kick Delay", "parameters", "delay" ]
+        range_from: 0
+        range_to: 100
+        step: 1
+
+  - section: "Tops"
+    description: |
+      Post X-Over gain stage!
+      Ensure Gain Filters are set-up correctly and in your pipeline!
+
+      Recommended settings:
+      Gain: 0dB
+      Limiter: -1dB
+      
+      Delay maths:
+      Distance = time (ms) x 0,343 m/ms
+      Time = Distance (m) / 0,343 m/ms
+      Rule of thumb: 50ms x 0,343 m/ms = 17,15m
+      For 4pt audio keep in mind that your distance is the delta of furthest point-source to stage and your sweet-spot to stage!
+
+    shortcuts:
+      - name: "Tops Gain (dB)"
+        config_elements:
+          - path: [ "filters", "Top Gain", "parameters", "gain" ]
+        range_from: -32
+        range_to: 12
+        step: 0.1
+      - name: "Tops Mute"
+        config_elements:
+          - path: [ "filters", "Top Gain", "parameters", "mute" ]
+        type: "boolean"
+      - name: "Tops Phase Inversion"
+        config_elements:
+          - path: [ "filters", "Top Gain", "parameters", "inverted" ]
+        type: "boolean"
+      - name: "Tops Limiter"
+        config_elements:
+          - path: [ "filters", "Top Limiter", "parameters", "clip_limit" ]
+        range_from: -12
+        range_to: -0.1
+        step: 0.1
+      - name: "Tops Delay"
+        config_elements:
+          - path: [ "filters", "Top Delay", "parameters", "delay" ]
+        range_from: 0
+        range_to: 100
+        step: 1
+
+  - section: "Monitors"
+    description: |
+      Post X-Over gain stage!
+      Ensure Gain Filters are set-up correctly and in your pipeline!
+
+      Recommended settings:
+      Gain: 0dB
+      Limiter: -1dB
+      
+      Delay maths:
+      Distance = time (ms) x 0,343 m/ms
+      Time = Distance (m) / 0,343 m/ms
+      Rule of thumb: 50ms x 0,343 m/ms = 17,15m
+      For 4pt audio keep in mind that your distance is the delta of furthest point-source to stage and your sweet-spot to stage!
+
+    shortcuts:
+      - name: "Monitors Gain (dB)"
+        config_elements:
+          - path: [ "filters", "Monitor Gain", "parameters", "gain" ]
+        range_from: -32
+        range_to: 12
+        step: 0.1
+      - name: "Monitors Mute"
+        config_elements:
+          - path: [ "filters", "Monitor Gain", "parameters", "mute" ]
+        type: "boolean"
+      - name: "Monitors Phase Inversion"
+        config_elements:
+          - path: [ "filters", "Monitor Gain", "parameters", "inverted" ]
+        type: "boolean"
+      - name: "Monitors Limiter"
+        config_elements:
+          - path: [ "filters", "Monitor Limiter", "parameters", "clip_limit" ]
+        range_from: -12
+        range_to: -0.1
+        step: 0.1
+      - name: "Monitors Delay"
+        config_elements:
+          - path: [ "filters", "Monitor Delay", "parameters", "delay" ]
+        range_from: 0
+        range_to: 100
+        step: 1
+
+#  - section: "Custom"
+#    description: |
+#      Demo for a few custom shortcuts.
+#      For crossover example, add one biquad lowpass filter named "Lowpass",
+#      and one highpass named "Highpass".
+#
+#      For the crossfade and switch examples,
+#      add two gain filters named "GainA" and "GainB".
+#    shortcuts:
+#      - name: "Crossover freq"
+#        config_elements:
+#          - path: ["filters", "Lowpass", "parameters", "freq"]
+#            reverse: false
+#          - path: ["filters", "Highpass", "parameters", "freq"]
+#            reverse: false
+#        range_from: 1000
+#        range_to: 1500
+#        step: 10
+#      - name: "Crossfade"
+#        config_elements:
+#          - path: ["filters", "GainA", "parameters", "gain"]
+#            reverse: false
+#          - path: ["filters", "GainB", "parameters", "gain"]
+#            reverse: true
+#        range_from: -20
+#        range_to: 0
+#        step: 0.5
+#        type: "number"
+#      - name: "Switch"
+#        config_elements:
+#          - path: ["filters", "GainA", "parameters", "mute"]
+#            reverse: false
+#          - path: ["filters", "GainB", "parameters", "mute"]
+#            reverse: true
+#        type: "boolean"

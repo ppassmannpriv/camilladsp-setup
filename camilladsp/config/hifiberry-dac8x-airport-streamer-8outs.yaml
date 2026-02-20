@@ -1,0 +1,282 @@
+description: 'channels 0-1: subs
+
+  channels 2-3: kicks
+
+  channels 4-5: tops
+
+  channels 6-7: monitoring'
+devices:
+  adjust_period: 10
+  capture:
+    channels: 2
+    device: hw:Loopback,0,0
+    format: S32LE
+    labels: null
+    link_mute_control: null
+    link_volume_control: null
+    stop_on_inactive: null
+    type: Alsa
+  capture_samplerate: 44100
+  chunksize: 256
+  enable_rate_adjust: true
+  multithreaded: null
+  playback:
+    channels: 8
+    device: hw:sndrpihifiberry,0,0
+    format: S32LE
+    type: Alsa
+  queuelimit: 4
+  rate_measure_interval: null
+  resampler: null
+  samplerate: 44100
+  silence_threshold: -100
+  silence_timeout: 5
+  stop_on_rate_change: null
+  target_level: 768
+  volume_limit: null
+  volume_ramp_time: null
+  worker_threads: null
+filters:
+  Kick:
+    description: Filter for kicks
+    parameters:
+      freq: 275
+      q: 1
+      type: Lowpass
+    type: Biquad
+  Kick Cut:
+    description: Filter out kicks
+    parameters:
+      freq: 245
+      q: 1
+      type: Highpass
+    type: Biquad
+  Kick Delay:
+    description: Delay for full Kick channel
+    parameters:
+      delay: 0
+      subsample: true
+      unit: ms
+    type: Delay
+  Kick Gain:
+    description: Kick Channel Gain in dB
+    parameters:
+      gain: 0
+      inverted: false
+      mute: false
+      scale: dB
+    type: Gain
+  Kick Limiter:
+    description: Kick Channel Limiter
+    parameters:
+      clip_limit: -0.3
+      soft_clip: true
+    type: Limiter
+  Monitor Cut:
+    description: null
+    parameters:
+      freq: 120
+      q: 1
+      type: Highpass
+    type: Biquad
+  Monitor Delay:
+    description: Delay for full Monitor channel
+    parameters:
+      delay: 0
+      subsample: true
+      unit: ms
+    type: Delay
+  Monitor Gain:
+    description: Monitor Channel Gain in dB
+    parameters:
+      gain: 0
+      inverted: false
+      mute: false
+      scale: dB
+    type: Gain
+  Monitor Limiter:
+    description: Monitor Channel Limiter
+    parameters:
+      clip_limit: -0.3
+      soft_clip: true
+    type: Limiter
+  Sub:
+    description: Filter for only subs
+    parameters:
+      freq: 80
+      q: 1
+      type: Lowpass
+    type: Biquad
+  Sub Cut:
+    description: Filter out subs
+    parameters:
+      freq: 85
+      q: 1
+      type: Highpass
+    type: Biquad
+  Sub Delay:
+    description: Delay for full Sub channel
+    parameters:
+      delay: 0
+      subsample: true
+      unit: ms
+    type: Delay
+  Sub Gain:
+    description: Sub Channel Gain in dB
+    parameters:
+      gain: 0
+      inverted: false
+      mute: false
+      scale: dB
+    type: Gain
+  Sub Limiter:
+    description: Sub Channel Limiter
+    parameters:
+      clip_limit: -0.3
+      soft_clip: true
+    type: Limiter
+  Top Delay:
+    description: Delay for full Top channel
+    parameters:
+      delay: 0
+      subsample: true
+      unit: ms
+    type: Delay
+  Top Gain:
+    description: Top Channel Gain in dB
+    parameters:
+      gain: 0
+      inverted: false
+      mute: false
+      scale: dB
+    type: Gain
+  Top Limiter:
+    description: Top Channel Limiter
+    parameters:
+      clip_limit: -0.3
+      soft_clip: true
+    type: Limiter
+mixers:
+  4x8 Matrix:
+    channels:
+      in: 2
+      out: 8
+    description: 4 Inputs 8 Outpus - Classic DJ Setup
+    labels: null
+    mapping:
+    - dest: 0
+      mute: false
+      sources:
+      - channel: 0
+        gain: 0
+        inverted: false
+        mute: false
+        scale: dB
+    - dest: 1
+      mute: false
+      sources:
+      - channel: 1
+        gain: 0
+        inverted: false
+        mute: false
+        scale: dB
+    - dest: 2
+      mute: false
+      sources:
+      - channel: 0
+        gain: 0
+        inverted: false
+        mute: false
+        scale: dB
+    - dest: 3
+      mute: false
+      sources:
+      - channel: 1
+        gain: 0
+        inverted: false
+        mute: false
+        scale: dB
+    - dest: 4
+      mute: false
+      sources:
+      - channel: 0
+        gain: 0
+        inverted: false
+        mute: false
+        scale: dB
+    - dest: 5
+      mute: false
+      sources:
+      - channel: 1
+        gain: 0
+        inverted: false
+        mute: false
+        scale: dB
+    - dest: 6
+      mute: false
+      sources:
+      - channel: 0
+        gain: 0
+        inverted: false
+        mute: false
+        scale: dB
+    - dest: 7
+      mute: false
+      sources:
+      - channel: 1
+        gain: 0
+        inverted: false
+        mute: false
+        scale: dB
+pipeline:
+- bypassed: null
+  description: null
+  name: 4x8 Matrix
+  type: Mixer
+- bypassed: null
+  channels:
+  - 0
+  - 1
+  description: Subs
+  names:
+  - Sub
+  - Sub Gain
+  - Sub Limiter
+  - Sub Delay
+  type: Filter
+- bypassed: null
+  channels:
+  - 3
+  - 2
+  description: Kicks
+  names:
+  - Sub Cut
+  - Kick
+  - Kick Gain
+  - Kick Limiter
+  - Kick Delay
+  type: Filter
+- bypassed: null
+  channels:
+  - 4
+  - 5
+  description: Tops
+  names:
+  - Kick Cut
+  - Top Gain
+  - Top Limiter
+  - Top Delay
+  type: Filter
+- bypassed: null
+  channels:
+  - 6
+  - 7
+  description: Monitoring
+  names:
+  - Monitor Cut
+  - Monitor Gain
+  - Monitor Limiter
+  - Monitor Delay
+  type: Filter
+processors: {}
+title: Airport Stream IN & 8 OUT DJ Setup - Matrix DSP
