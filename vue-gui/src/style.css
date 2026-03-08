@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .vol-slider-vertical {
+    -webkit-appearance: slider-vertical;
+    appearance: slider-vertical;
+    accent-color: #38bdf8;
+    background: transparent;
+  }
+
+  .meter-fill {
+    transition: height 80ms linear;
+  }
+
+  .peak-indicator {
+    position: relative;
+  }
+
+  .pipeline-node-filter    { @apply border-yellow-600/60 bg-yellow-900/20; }
+  .pipeline-node-mixer     { @apply border-purple-600/60 bg-purple-900/20; }
+  .pipeline-node-processor { @apply border-teal-600/60 bg-teal-900/20; }
+
+  .mute-active   { @apply bg-red-600 border-red-400 text-white; }
+  .mute-inactive { @apply bg-slate-700 border-slate-600 text-slate-400 hover:bg-slate-600 hover:text-white; }
+}
+
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }
