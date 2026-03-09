@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
+import * as yaml  from 'yaml';
 import type { CamillaConfig, ViewName } from '../types';
 
 export const useCamillaStore = defineStore('camilla', () => {
@@ -63,7 +64,15 @@ export const useCamillaStore = defineStore('camilla', () => {
         case 'GetBufferSize':    bufferSize.value = Number(val ?? 0); break;
         case 'GetConfigFilePath': activeConfig.value = String(val ?? '--'); break;
         case 'GetAvailableConfigFiles': configs.value = (val as string[]) ?? []; break;
-        case 'GetConfig':        config.value = (val as CamillaConfig) ?? null; break;
+        case 'GetConfig': {
+          if (typeof val === "string") {
+            const configYaml = yaml.parseDocument(val);
+            config.value = configYaml.toJS() as CamillaConfig ?? null;
+          } else {
+            console.log("GetConfig: not a string.");
+          }
+          break;
+        }
         case 'GetCaptureDevice': captureDevice.value = String(val ?? '--'); break;
         case 'GetPlaybackDevice': playbackDevice.value = String(val ?? '--'); break;
         case 'GetCaptureSignalLevels': {

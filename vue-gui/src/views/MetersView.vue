@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useCamillaStore } from '../stores/camilla';
 import { useSocket } from '../composables/useSocket';
+import * as yaml from "yaml";
 
 const store = useCamillaStore();
 const { sendCmd } = useSocket();
@@ -20,6 +21,18 @@ function barColor(db: number): string {
 function toggleMute(type: 'input' | 'output', idx: number) {
   if (type === 'input') {
     store.inputMutes[idx] = !store.inputMutes[idx];
+    if (store.config === null) return;
+    const mixers = store.config.mixers;
+    for (const mixerKey in mixers) {
+      const mixer = mixers[mixerKey];
+
+      if (mixer === undefined || mixer.mapping === undefined || mixer.mapping[idx] === undefined) continue;
+      const channelMapping = mixer.mapping[idx];
+      channelMapping.mute = !store.inputMutes[idx];
+      mixer.mapping[idx].mute = !mixer.mapping[idx].mute;
+    }
+    //@TODO: Oh wow this worked lmao
+    sendCmd({ SetConfig: yaml.stringify(store.config) });
     sendCmd({ SetInputMute: { channel: idx, mute: store.inputMutes[idx] } });
   } else {
     store.outputMutes[idx] = !store.outputMutes[idx];

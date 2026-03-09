@@ -23,7 +23,6 @@ export function useSocket() {
     if (pollTimer) clearInterval(pollTimer);
     pollTimer = setInterval(() => {
       if (!store.connected) return;
-      // sendCmd({ GetCaptureSignalLevels: null });
       sendCmd({ GetSignalLevels: null });
       if (store.view === 'status') {
         sendCmd({ GetState: null });

@@ -32,6 +32,7 @@ export interface MixerDef {
 
 export interface MixerMapping {
   dest: number;
+  mute: boolean;
   sources: { channel: number; gain?: number; inverted?: boolean; mute?: boolean }[];
 }
 
