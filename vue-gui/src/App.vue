@@ -11,11 +11,16 @@ import FiltersView  from './views/FiltersView.vue';
 import ConfigsView  from './views/ConfigsView.vue';
 import StatusView   from './views/StatusView.vue';
 import SettingsView from './views/SettingsView.vue';
+import { CamillaDspWsBridge } from "./bridge/camilla-dsp-ws-bridge";
 
 const store = useCamillaStore();
-const { connect, sendCmd } = useSocket();
+const {connect} = useSocket();
 
-onMounted(() => connect());
+let socket: CamillaDspWsBridge | null = null;
+
+onMounted(() => {
+  socket = connect();
+});
 
 const views: { id: ViewName; label: string; color: string; icon: string }[] = [
   { id: 'meters',   label: 'Meters',   color: 'text-sky-400',    icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
@@ -29,7 +34,8 @@ const views: { id: ViewName; label: string; color: string; icon: string }[] = [
 
 function setVolume(v: number) {
   store.volume = v;
-  sendCmd({ SetVolume: v });
+  console.log(socket);
+  socket?.setVolume(v);
 }
 </script>
 

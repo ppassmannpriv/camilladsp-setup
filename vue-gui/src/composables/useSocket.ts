@@ -1,84 +1,78 @@
 import { onUnmounted } from 'vue';
 import { useCamillaStore } from '../stores/camilla';
-import { MockCamillaDSP } from '../mock';
+import { CamillaDspWsBridge, MessageHandler, WsReply } from '../bridge/camilla-dsp-ws-bridge.ts';
 
-type AnySocket = MockCamillaDSP | WebSocket;
+let socket: CamillaDspWsBridge | null = null;
 
-let socket: AnySocket | null = null;
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 
 export function useSocket() {
   const store = useCamillaStore();
 
-  function sendCmd(cmd: Record<string, unknown>) {
-    if (!socket) return;
-    if (socket instanceof MockCamillaDSP) {
-      socket.send(cmd);
-    } else if (socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify(cmd));
-    }
-  }
-
   function startPolling() {
     if (pollTimer) clearInterval(pollTimer);
     pollTimer = setInterval(() => {
       if (!store.connected) return;
-      sendCmd({ GetSignalLevels: null });
+
+      socket?.getSignalLevels();
       if (store.view === 'status') {
-        sendCmd({ GetState: null });
-        sendCmd({ GetCaptureSampleRate: null });
+        socket?.getState();
+        socket?.getCaptureRate();
       }
     }, store.pollInterval);
   }
 
-  function connect() {
+  function connect(): CamillaDspWsBridge | null {
     // Tear down existing connection
     if (socket) {
-      if (socket instanceof MockCamillaDSP) socket.disconnect();
-      else socket.close();
+      socket.disconnect();
       socket = null;
     }
     if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
 
     if (store.devMode) {
-      const mock = new MockCamillaDSP(store.handleMessage);
-      socket = mock;
-      mock.connect();
       store.connected = true;
       startPolling();
     } else {
       try {
-        const ws = new WebSocket(`ws://${store.host}`);
-        socket = ws;
-        ws.onopen = () => {
+        const onConnect = () => {
           store.connected = true;
-          sendCmd({ GetVersion: null });
-          sendCmd({ GetVolume: null });
-          sendCmd({ GetState: null });
-          sendCmd({ GetCaptureSampleRate: null });
-          sendCmd({ GetConfigFilePath: null });
-          sendCmd({ GetAvailableConfigFiles: null });
-          sendCmd({ GetConfig: null });
-          sendCmd({ GetBufferSize: null });
-          sendCmd({ GetCaptureDevice: null });
-          sendCmd({ GetPlaybackDevice: null });
+          socket?.getVersion();
+          socket?.getVolume();
+          socket?.getState();
+          socket?.getCaptureRate();
+          socket?.getConfigFilePath();
+          // socket?.getAvailableConfigFiles();
+          socket?.getConfig();
+          socket?.getBufferLevel();
+          // socket?.getCaptureDevice();
+          // socket?.getPlaybackDevice();
           startPolling();
         };
-        ws.onmessage = (ev) => {
-          try { store.handleMessage(JSON.parse(ev.data)); } catch { /* ignore */ }
+        const onMessage: MessageHandler = (reply: WsReply) => {
+          try { store.handleMessage(reply); } catch { console.error('Error handling message', reply); }
         };
-        ws.onclose = () => { store.connected = false; };
-        ws.onerror = () => { store.connected = false; };
+        const onDisconnect = () => { store.connected = false; };
+        // ws.onclose = () => { store.connected = false; };
+        // ws.onerror = () => { store.connected = false; };
+        socket = new CamillaDspWsBridge({
+          onMessage,
+          onConnect,
+          onDisconnect,
+        });
+
+        socket.connect(store.host);
       } catch {
         store.connected = false;
       }
     }
+
+    return socket;
   }
 
   function disconnect() {
     if (socket) {
-      if (socket instanceof MockCamillaDSP) socket.disconnect();
-      else socket.close();
+      socket.disconnect();
       socket = null;
     }
     if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
@@ -87,5 +81,5 @@ export function useSocket() {
 
   onUnmounted(disconnect);
 
-  return { connect, disconnect, sendCmd };
+  return { connect, disconnect, socket };
 }

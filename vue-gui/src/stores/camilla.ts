@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import * as yaml  from 'yaml';
 import type { CamillaConfig, ViewName } from '../types';
+import { WsReply } from "../bridge/camilla-dsp-ws-bridge.ts";
 
 export const useCamillaStore = defineStore('camilla', () => {
   // ── Connection ────────────────────────────────────────────────────────────
@@ -50,7 +51,7 @@ export const useCamillaStore = defineStore('camilla', () => {
     menuOpen.value = false;
   }
 
-  function handleMessage(msg: Record<string, unknown>) {
+  function handleMessage(msg: WsReply | Record<string, unknown>) {
     for (const [key, payload] of Object.entries(msg)) {
       const p = payload as Record<string, unknown>;
       if (p?.result !== 'Ok') continue;
