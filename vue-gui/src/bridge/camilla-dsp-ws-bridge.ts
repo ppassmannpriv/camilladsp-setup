@@ -199,6 +199,10 @@ export class CamillaDspWsBridge {
     this.onDisconnect = options.onDisconnect;
   }
 
+  get wsState(): number {
+    return this.ws?.readyState ?? 3;
+  }
+
   get connected(): boolean {
     return this.ws?.readyState === WebSocket.OPEN;
   }
@@ -217,6 +221,7 @@ export class CamillaDspWsBridge {
         this.onMessage(reply);
       } catch {
         // ignore malformed messages
+        console.error('Received malformed message from Camilla DSP:', ev.data);
       }
     };
   }

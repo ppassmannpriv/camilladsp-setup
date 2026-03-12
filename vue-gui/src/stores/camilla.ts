@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import * as yaml  from 'yaml';
 import type { CamillaConfig, ViewName } from '../types';
-import { WsReply } from "../bridge/camilla-dsp-ws-bridge.ts";
+import { CamillaDspWsBridge, MessageHandler, WsReply } from "../bridge/camilla-dsp-ws-bridge.ts";
 
 export const useCamillaStore = defineStore('camilla', () => {
   // ── Connection ────────────────────────────────────────────────────────────
@@ -45,7 +45,7 @@ export const useCamillaStore = defineStore('camilla', () => {
     return 'text-slate-400';
   });
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
+  // ── Actions ───────────────────────────────────────────────────────────────
   function setView(v: ViewName) {
     view.value = v;
     menuOpen.value = false;

@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useCamillaStore } from '../stores/camilla';
-import { useSocket } from '../composables/useSocket';
+import { useCamillaDspStore } from '../stores/useCamillaDspStore';
+
 import * as yaml from "yaml";
 
-const store = useCamillaStore();
-const { sendCmd } = useSocket();
+const store = useCamillaDspStore();
 
 // Convert dB level (-100..0) to a 0–100% bar height
 function dbToPercent(db: number): number {
@@ -22,7 +21,7 @@ function toggleMute(type: 'input' | 'output', idx: number) {
   if (type === 'input') {
     store.inputMutes[idx] = !store.inputMutes[idx];
     if (store.config === null) return;
-    const mixers = store.config.mixers;
+    const mixers = store.config?.mixers;
     for (const mixerKey in mixers) {
       const mixer = mixers[mixerKey];
 
@@ -31,16 +30,18 @@ function toggleMute(type: 'input' | 'output', idx: number) {
       channelMapping.mute = !store.inputMutes[idx];
       mixer.mapping[idx].mute = !mixer.mapping[idx].mute;
     }
+
     //@TODO: Oh wow this worked lmao
-    sendCmd({ SetConfig: yaml.stringify(store.config) });
-    sendCmd({ SetInputMute: { channel: idx, mute: store.inputMutes[idx] } });
+    store.dspSocket?.setConfig(yaml.stringify(store.config));
+    store.dspSocket?.setMute(store.inputMutes[idx]);
   } else {
-    store.outputMutes[idx] = !store.outputMutes[idx];
-    sendCmd({ SetOutputMute: { channel: idx, mute: store.outputMutes[idx] } });
+    //store.outputMutes[idx] = !store.outputMutes[idx];
+    //sendCmd({ SetOutputMute: { channel: idx, mute: store.outputMutes[idx] } });
   }
 }
 
 const channels = computed(() => Array.from({ length: 8 }, (_, i) => i));
+
 </script>
 
 <template>

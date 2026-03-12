@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { useCamillaStore } from './stores/camilla';
-import { useSocket } from './composables/useSocket';
+
+import { useCamillaDspStore } from './stores/useCamillaDspStore.ts';
 import type { ViewName } from './types';
 
 import MetersView   from './views/MetersView.vue';
@@ -11,15 +11,11 @@ import FiltersView  from './views/FiltersView.vue';
 import ConfigsView  from './views/ConfigsView.vue';
 import StatusView   from './views/StatusView.vue';
 import SettingsView from './views/SettingsView.vue';
-import { CamillaDspWsBridge } from "./bridge/camilla-dsp-ws-bridge";
 
-const store = useCamillaStore();
-const {connect} = useSocket();
-
-let socket: CamillaDspWsBridge | null = null;
+const store = useCamillaDspStore();
 
 onMounted(() => {
-  socket = connect();
+  store.connect();
 });
 
 const views: { id: ViewName; label: string; color: string; icon: string }[] = [
@@ -33,9 +29,7 @@ const views: { id: ViewName; label: string; color: string; icon: string }[] = [
 ];
 
 function setVolume(v: number) {
-  store.volume = v;
-  console.log(socket);
-  socket?.setVolume(v);
+  store.setVolume(v);
 }
 </script>
 
