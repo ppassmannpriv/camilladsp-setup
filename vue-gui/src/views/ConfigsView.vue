@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { useCamillaStore } from '../stores/camilla';
-import { useSocket } from '../composables/useSocket';
+//import { useSocket } from '../composables/useSocket';
 
 const store = useCamillaStore();
-const { sendCmd } = useSocket();
+//const { sendCmd } = useSocket();
 
 function loadConfig(name: string) {
-  sendCmd({ SetConfigFilePath: name });
-  sendCmd({ Reload: null });
+  console.log('Loading config:', name);
+//  sendCmd({ SetConfigFilePath: name });
+//  sendCmd({ Reload: null });
 }
 </script>
 

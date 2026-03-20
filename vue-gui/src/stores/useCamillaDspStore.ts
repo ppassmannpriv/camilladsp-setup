@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import type { ViewName } from '../types';
+import * as yaml  from 'yaml';
+import type { ViewName, MatrixMixer, Source } from '../types';
 import { CamillaDspWsBridge, MessageHandler, WsReply } from '../bridge/camilla-dsp-ws-bridge.ts';
 
 let pollTimer: ReturnType<typeof setInterval> | null = null;
@@ -57,6 +58,7 @@ export const useCamillaDspStore = defineStore('camilladsp', {
             this.dspSocket?.getBufferLevel();
         },
         onDisconnect() {
+            this.connected = false;
             console.log('WebSocket closed');
         },
         startPolling() {
@@ -85,14 +87,21 @@ export const useCamillaDspStore = defineStore('camilladsp', {
         },
         getSignalLevels({ capture_peak, capture_rms, playback_peak, playback_rms }: {
             capture_peak?: number[],
-                capture_rms?: number[],
-                playback_peak?: number[],
-                playback_rms?: number[],
+            capture_rms?: number[],
+            playback_peak?: number[],
+            playback_rms?: number[],
         }) {
             if (Array.isArray(playback_rms)) this.outputLevels = playback_rms.map((n) => parseFloat(String(n)));
             if (Array.isArray(playback_peak)) this.outputPeakLevels = playback_peak.map((n) => parseFloat(String(n)));
             if (Array.isArray(capture_rms)) this.inputLevels = capture_rms.map((n) => parseFloat(String(n)));
             if (Array.isArray(capture_peak)) this.inputPeakLevels = capture_peak.map((n) => parseFloat(String(n)));
+        },
+        setView(v: ViewName) {
+            this.view = v;
+            this.menuOpen = false;
+        },
+        muteInputChannel(channel: number) {
+            this.sourceChannels[channel]
         }
     },
     getters: {
@@ -102,6 +111,24 @@ export const useCamillaDspStore = defineStore('camilladsp', {
                 dspPort: 1234,
                 dspPollInterval: state.pollInterval
             }
+        },
+        systemState: (state) => {
+            return state.dspState;
+        },
+        dspConfig: (state) => {
+            return yaml.parseDocument(state?.config ?? '').toJS() as Record<string, unknown> ?? {};
+        },
+        matrixMixer: (state) => {
+            // @TODO: create type definition for mixers
+            const dspConfig = yaml.parseDocument(state?.config ?? '').toJS() as Record<string, object> ?? {};
+            const [mixerTitle, mixer] = Object.entries(dspConfig.mixers).pop() as [string, object];
+            console.log(mixerTitle, mixer);
+            return { mixerTitle, ...mixer } as MatrixMixer
+        },
+        sourceChannels(): Source[] {
+            return this.matrixMixer.mapping.map(mapping => {
+                return mapping.sources[0];
+            }) as Source[];
         }
     }
 });

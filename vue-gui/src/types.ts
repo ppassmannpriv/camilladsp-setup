@@ -50,3 +50,26 @@ export interface PipelineStep {
 }
 
 export type ViewName = 'meters' | 'pipeline' | 'spectrum' | 'filters' | 'configs' | 'status' | 'settings';
+
+export interface Source {
+  channel: number,
+  gain: number,
+  inverted: boolean,
+  mute: boolean,
+  scale: string
+}
+
+export interface MatrixMixer {
+  mixerTitle: string,
+  description?: string,
+  channels: {
+    in: number,
+    out: number,
+  }[],
+  labels: string | null,
+  mapping: {
+    dest: number,
+    mute: boolean,
+    sources: Source[]
+  }[]
+}

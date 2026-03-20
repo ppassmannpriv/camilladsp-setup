@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useCamillaStore } from '../stores/camilla';
-import { useSocket } from '../composables/useSocket';
+//import { useCamillaStore } from '../stores/camilla';
+//import { useSocket } from '../composables/useSocket';
 
-const store = useCamillaStore();
-const { connect } = useSocket();
+//const store = useCamillaStore();
+//const { connect } = useSocket();
 
 function onDevModeChange(e: Event) {
-  store.devMode = (e.target as HTMLInputElement).checked;
-  connect();
+//  store.devMode = (e.target as HTMLInputElement).checked;
+//  connect();
 }
 
 function onPollChange(e: Event) {

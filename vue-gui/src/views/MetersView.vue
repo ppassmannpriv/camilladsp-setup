@@ -19,6 +19,7 @@ function barColor(db: number): string {
 
 function toggleMute(type: 'input' | 'output', idx: number) {
   if (type === 'input') {
+    console.log(store.dspSocket?.getFaders());
     store.inputMutes[idx] = !store.inputMutes[idx];
     if (store.config === null) return;
     const mixers = store.config?.mixers;
@@ -30,7 +31,7 @@ function toggleMute(type: 'input' | 'output', idx: number) {
       channelMapping.mute = !store.inputMutes[idx];
       mixer.mapping[idx].mute = !mixer.mapping[idx].mute;
     }
-
+    console.log(idx);
     //@TODO: Oh wow this worked lmao
     store.dspSocket?.setConfig(yaml.stringify(store.config));
     store.dspSocket?.setMute(store.inputMutes[idx]);
