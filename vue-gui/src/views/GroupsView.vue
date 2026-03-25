@@ -28,6 +28,10 @@ function toggleMute(type: 'input' | 'output', idx: number) {
   }
 }
 
+const configLoaded = computed(() => store.$state.config !== null);
+
+const inputGroups = computed(() => Array.from({ length: 4 }, (_, i) => i));
+
 const channels = computed(() => Array.from({ length: 8 }, (_, i) => i));
 
 </script>
@@ -35,31 +39,29 @@ const channels = computed(() => Array.from({ length: 8 }, (_, i) => i));
 <template>
   <div class="absolute inset-0 flex flex-col">
     <!-- Section header row -->
-    <div class="grid grid-cols-2 divide-x divide-slate-700 shrink-0 border-b border-slate-700">
-      <div class="px-3 py-1 text-[9px] uppercase tracking-widest text-slate-500 font-bold">Capture In</div>
-      <div class="px-3 py-1 text-[9px] uppercase tracking-widest text-slate-500 font-bold">Playback Out</div>
+    <div class="grid grid-cols-1 divide-x divide-slate-700 shrink-0 border-b border-slate-700">
+      <div class="px-3 py-1 text-[9px] uppercase tracking-widest text-slate-500 font-bold">Source Groups</div>
     </div>
 
-    <!-- Meter columns -->
-    <div class="flex-1 grid grid-cols-2 divide-x divide-slate-700 overflow-hidden">
+    <div class="flex-1 grid grid-cols-1 divide-x divide-slate-700 overflow-hidden">
 
       <!-- Input meters -->
       <div class="flex items-end justify-around px-2 pb-2 pt-1 gap-1">
         <div
-          v-for="i in channels" :key="'in-' + i"
-          class="flex flex-col items-center gap-1 flex-1 h-full"
+            v-for="i in inputGroups" :key="'in-' + i"
+            class="flex flex-col items-center gap-1 flex-1 h-full"
         >
           <!-- Bar -->
           <div class="flex-1 w-full flex flex-col justify-end bg-slate-800 rounded-sm overflow-hidden min-h-0">
             <div
-              class="w-full rounded-sm meter-fill"
-              :class="barColor(store.inputLevels[i], store.inputMutes[i])"
-              :style="{ height: dbToPercent(store.inputLevels[i]) + '%' }"
+                class="w-full rounded-sm meter-fill"
+                :class="barColor(store.inputLevels[i], store.inputMutes[i])"
+                :style="{ height: dbToPercent(store.inputLevels[i]) + '%' }"
             />
             <div
-              class="w-full rounded-sm h-1 peak-indicator"
-              :class="barColor(store.inputLevels[i], store.inputMutes[i])"
-              :style="{ bottom: dbToPercent(store.inputPeakLevels[i]) + '%' }"
+                class="w-full rounded-sm h-1 peak-indicator"
+                :class="barColor(store.inputLevels[i], store.inputMutes[i])"
+                :style="{ bottom: dbToPercent(store.inputPeakLevels[i]) + '%' }"
             />
           </div>
           <!-- dB label -->
@@ -68,14 +70,23 @@ const channels = computed(() => Array.from({ length: 8 }, (_, i) => i));
           </span>
           <!-- Mute button -->
           <button
-            class="w-full text-[8px] font-bold py-0.5 rounded border transition-colors touch-manipulation"
-            :class="store.inputMutes[i] ? 'mute-active' : 'mute-inactive'"
-            @click="toggleMute('input', i)"
+              class="w-full text-[8px] font-bold py-0.5 rounded border transition-colors touch-manipulation"
+              :class="store.inputMutes[i] ? 'mute-active' : 'mute-inactive'"
+              @click="toggleMute('input', i)"
           >M</button>
           <!-- Channel label -->
           <span class="text-[8px] text-slate-500">{{ i + 1 }}</span>
         </div>
       </div>
+    </div>
+
+    <!-- Section header row -->
+    <div class="grid grid-cols-1 divide-x divide-slate-700 shrink-0 border-b border-slate-700">
+      <div class="px-3 py-1 text-[9px] uppercase tracking-widest text-slate-500 font-bold">Output Groups</div>
+    </div>
+
+    <!-- Meter columns -->
+    <div class="flex-1 grid grid-cols-1 divide-x divide-slate-700 overflow-hidden">
 
       <!-- Output meters -->
       <div class="flex items-end justify-around px-2 pb-2 pt-1 gap-1">
@@ -103,10 +114,9 @@ const channels = computed(() => Array.from({ length: 8 }, (_, i) => i));
             :class="store.outputMutes[i] ? 'mute-active' : 'mute-inactive'"
             @click="toggleMute('output', i)"
           >M</button>
-          <span class="text-[8px] text-slate-500">{{ i + 1 }}</span>
+          <span v-if="configLoaded" class="text-[12px] text-slate-500">{{ store.outputChannels[i].label }}</span>
         </div>
       </div>
-
     </div>
   </div>
 </template>

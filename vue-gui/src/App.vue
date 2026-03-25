@@ -4,6 +4,7 @@ import { onMounted } from 'vue';
 import { useCamillaDspStore } from './stores/useCamillaDspStore.ts';
 import type { ViewName } from './types';
 
+import GroupsView from './views/GroupsView.vue';
 import MetersView   from './views/MetersView.vue';
 import PipelineView from './views/PipelineView.vue';
 import SpectrumView from './views/SpectrumView.vue';
@@ -19,6 +20,7 @@ onMounted(() => {
 });
 
 const views: { id: ViewName; label: string; color: string; icon: string }[] = [
+  { id: 'groups',   label: 'Groups',   color: 'text-sky-400',    icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
   { id: 'meters',   label: 'Meters',   color: 'text-sky-400',    icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
   { id: 'pipeline', label: 'Pipeline', color: 'text-purple-400', icon: 'M4 6h16M4 10h16M4 14h16M4 18h16' },
   { id: 'spectrum', label: 'Spectrum', color: 'text-green-400',  icon: 'M7 20l4-16m2 16l4-16M6 9h14M4 15h14' },
@@ -76,7 +78,8 @@ function setVolume(v: number) {
 
     <!-- ── View container ── -->
     <main class="flex-1 overflow-hidden relative">
-      <MetersView   v-if="store.view === 'meters'"   />
+      <GroupsView   v-if="store.view === 'groups'"   />
+      <MetersView   v-else-if="store.view === 'meters'"   />
       <PipelineView v-else-if="store.view === 'pipeline'" />
       <SpectrumView v-else-if="store.view === 'spectrum'" />
       <FiltersView  v-else-if="store.view === 'filters'"  />

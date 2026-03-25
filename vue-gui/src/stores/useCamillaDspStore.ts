@@ -14,7 +14,7 @@ export const useCamillaDspStore = defineStore('camilladsp', {
         pollInterval: 100,
         dspSocket: null as CamillaDspWsBridge | null,
         // Navigation
-        view: 'meters' as ViewName,
+        view: 'groups' as ViewName,
         menuOpen: false,
         // Signal levels
         inputLevels: Array(8).fill(-100),
@@ -42,7 +42,7 @@ export const useCamillaDspStore = defineStore('camilladsp', {
                     case 'GetVersion': { this.version = p.value as string; break; }
                     case 'GetState': { this.dspState = p.value as string; break; }
                     case 'GetCaptureRate': { this.samplerate = p.value as number; break; }
-                    case 'GetConfig': { this.config = p.value as string; break; }
+                    case 'GetConfig': { this.config = p.value as string; this.updateMutes(); break; }
                     case 'GetBufferLevel': { this.bufferSize = p.value as number; break; }
                     default: { console.log('Received message:', msg); }
                 }
@@ -100,8 +100,45 @@ export const useCamillaDspStore = defineStore('camilladsp', {
             this.view = v;
             this.menuOpen = false;
         },
-        muteInputChannel(channel: number) {
-            this.sourceChannels[channel]
+        updateMutes() {
+            this.matrixMixer.mapping.forEach((channel) => {
+                this.outputMutes[channel.dest] = channel.mute;
+                channel.sources.forEach((source) => {
+                    this.inputMutes[channel.dest] = source.mute;
+                })
+            })
+        },
+        toggleMuteInputChannel(channel: number) {
+            const matrixMixerMapping = this.matrixMixer.mapping;
+            matrixMixerMapping[channel].sources.every((source) => {
+                source.mute = !source.mute;
+            });
+
+            const updateConfig = this.dspConfig as object;
+            updateConfig.mixers[this.matrixMixer.mixerTitle] = {
+                mapping: matrixMixerMapping,
+                channels: this.matrixMixer.channels,
+                labels: this.matrixMixer.labels,
+                description: this.matrixMixer.description,
+            };
+
+            this.dspSocket?.setConfig(yaml.stringify(updateConfig));
+            this.updateMutes();
+        },
+        toggleMuteOutputChannel(channel: number) {
+            const matrixMixerMapping = this.matrixMixer.mapping;
+            matrixMixerMapping[channel].mute = !matrixMixerMapping[channel].mute;
+
+            const updateConfig = this.dspConfig as object;
+            updateConfig.mixers[this.matrixMixer.mixerTitle] = {
+                mapping: matrixMixerMapping,
+                channels: this.matrixMixer.channels,
+                labels: this.matrixMixer.labels,
+                description: this.matrixMixer.description,
+            };
+
+            this.dspSocket?.setConfig(yaml.stringify(updateConfig));
+            this.updateMutes();
         }
     },
     getters: {
@@ -119,11 +156,24 @@ export const useCamillaDspStore = defineStore('camilladsp', {
             return yaml.parseDocument(state?.config ?? '').toJS() as Record<string, unknown> ?? {};
         },
         matrixMixer: (state) => {
-            // @TODO: create type definition for mixers
             const dspConfig = yaml.parseDocument(state?.config ?? '').toJS() as Record<string, object> ?? {};
             const [mixerTitle, mixer] = Object.entries(dspConfig.mixers).pop() as [string, object];
-            console.log(mixerTitle, mixer);
             return { mixerTitle, ...mixer } as MatrixMixer
+        },
+        inputGroups(): Source[] {
+            // Bind the mapping so inputs and outputs mapped following the matrix so we can fully mute channel groups
+            let inputGroups: Source[] = [];
+            this.matrixMixer.mapping.forEach((channel) => {
+                channel.sources.forEach((source) => {
+                    inputGroups[source.channel] = source;
+                })
+            })
+            return inputGroups;
+        },
+        outputChannels(): { dest: number; mute: boolean; sources: Source[]; label: string }[] {
+            return this.matrixMixer.mapping.map((channel, channelIndex: number) => {
+                return { ...channel, label: this.matrixMixer.labels != null ? this.matrixMixer.labels[channelIndex] : '' };
+            });
         },
         sourceChannels(): Source[] {
             return this.matrixMixer.mapping.map(mapping => {

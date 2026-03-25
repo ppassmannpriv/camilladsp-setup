@@ -49,7 +49,7 @@ export interface PipelineStep {
   bypassed?: boolean;
 }
 
-export type ViewName = 'meters' | 'pipeline' | 'spectrum' | 'filters' | 'configs' | 'status' | 'settings';
+export type ViewName = 'groups' | 'meters' | 'pipeline' | 'spectrum' | 'filters' | 'configs' | 'status' | 'settings';
 
 export interface Source {
   channel: number,
