@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { useCamillaStore } from '../stores/camilla';
+import { useCamillaDspStore } from '../stores/useCamillaDspStore';
 
-const store = useCamillaStore();
+const store = useCamillaDspStore();
+
 const selected = ref<string | null>(null);
 
-const filters = computed(() => Object.entries(store.config?.filters ?? {}));
+const filters = computed(() => Object.entries(store.filters ?? {}));
 
 function typeColor(type: string) {
   const map: Record<string, string> = {
@@ -32,7 +33,7 @@ function typeBadge(type: string) {
 }
 
 const selectedFilter = computed(() =>
-  selected.value ? store.config?.filters?.[selected.value] : null
+  selected.value ? store.filters?.[selected.value] : null
 );
 </script>
 

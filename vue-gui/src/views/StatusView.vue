@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useCamillaStore } from '../stores/camilla';
+import { useCamillaDspStore } from '../stores/useCamillaDspStore';
 
-const store = useCamillaStore();
+const store = useCamillaDspStore();
 
 const stats = [
   { id: 'state',   label: 'State',          color: 'text-emerald-400', value: () => store.systemState },
@@ -30,19 +30,19 @@ const stats = [
       <!-- Capture device (full width) -->
       <div class="bg-slate-800/60 border border-slate-700 rounded-lg p-3 col-span-2">
         <div class="text-[9px] uppercase text-slate-500 font-bold tracking-widest mb-1">Capture Device</div>
-        <div class="text-sm font-mono text-slate-300 truncate">{{ store.captureDevice }}</div>
+        <div class="text-sm font-mono text-slate-300 truncate">{{ store.dspConfig.devices.capture.device }} - {{ store.dspConfig.devices.capture.type }} {{ store.dspConfig.devices.capture.format }}</div>
       </div>
 
       <!-- Playback device (full width) -->
       <div class="bg-slate-800/60 border border-slate-700 rounded-lg p-3 col-span-2">
         <div class="text-[9px] uppercase text-slate-500 font-bold tracking-widest mb-1">Playback Device</div>
-        <div class="text-sm font-mono text-slate-300 truncate">{{ store.playbackDevice }}</div>
+        <div class="text-sm font-mono text-slate-300 truncate">{{ store.dspConfig.devices.playback.device }} - {{ store.dspConfig.devices.playback.type }} {{ store.dspConfig.devices.playback.format }}</div>
       </div>
 
       <!-- Active config (full width) -->
       <div class="bg-slate-800/60 border border-slate-700 rounded-lg p-3 col-span-2">
         <div class="text-[9px] uppercase text-slate-500 font-bold tracking-widest mb-1">Active Config</div>
-        <div class="text-sm font-mono text-slate-300 truncate">{{ store.activeConfig }}</div>
+        <div class="text-sm font-mono text-slate-300 truncate">{{ store.dspConfig.title }}</div>
       </div>
     </div>
   </div>

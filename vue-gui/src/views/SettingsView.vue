@@ -1,9 +1,7 @@
 <script setup lang="ts">
-//import { useCamillaStore } from '../stores/camilla';
-//import { useSocket } from '../composables/useSocket';
+import { useCamillaDspStore } from '../stores/useCamillaDspStore';
 
-//const store = useCamillaStore();
-//const { connect } = useSocket();
+const store = useCamillaDspStore();
 
 function onDevModeChange(e: Event) {
 //  store.devMode = (e.target as HTMLInputElement).checked;
@@ -34,7 +32,6 @@ function onPollChange(e: Event) {
             type="checkbox"
             class="sr-only peer"
             :checked="store.devMode"
-            @change="onDevModeChange"
           />
           <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer
             peer-checked:after:translate-x-full peer-checked:after:border-white

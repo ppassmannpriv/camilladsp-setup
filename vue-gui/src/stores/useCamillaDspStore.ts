@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import * as yaml  from 'yaml';
-import type { ViewName, MatrixMixer, Source } from '../types';
+import {ViewName, MatrixMixer, Source, PipelineStep, FilterDef} from '../types';
 import { CamillaDspWsBridge, MessageHandler, WsReply } from '../bridge/camilla-dsp-ws-bridge.ts';
 
 let pollTimer: ReturnType<typeof setInterval> | null = null;
@@ -14,7 +14,7 @@ export const useCamillaDspStore = defineStore('camilladsp', {
         pollInterval: 100,
         dspSocket: null as CamillaDspWsBridge | null,
         // Navigation
-        view: 'groups' as ViewName,
+        view: 'meters' as ViewName,
         menuOpen: false,
         // Signal levels
         inputLevels: Array(8).fill(-100),
@@ -30,6 +30,9 @@ export const useCamillaDspStore = defineStore('camilladsp', {
         version: 'unknown',
         dspState: 'stopped',
         bufferSize: 0,
+        captureDevice: 'unknown',
+        playbackDevice: 'unknown',
+        activeConfig: 'unknown',
     }),
     actions: {
         onMessage(msg: WsReply) {
@@ -108,6 +111,26 @@ export const useCamillaDspStore = defineStore('camilladsp', {
                 })
             })
         },
+        toggleMuteInputChannelGroup(channel: number) {
+            const matrixMixerMapping = this.matrixMixer.mapping;
+            matrixMixerMapping.forEach((mappedChannel) => {
+                mappedChannel.sources.forEach((source) => {
+                    if (source.channel !== channel) return true;
+                    source.mute = !source.mute;
+                })
+            })
+            console.log(matrixMixerMapping);
+            const updateConfig = this.dspConfig as object;
+            updateConfig.mixers[this.matrixMixer.mixerTitle] = {
+                mapping: matrixMixerMapping,
+                channels: this.matrixMixer.channels,
+                labels: this.matrixMixer.labels,
+                description: this.matrixMixer.description,
+            };
+
+            this.dspSocket?.setConfig(yaml.stringify(updateConfig));
+            this.updateMutes();
+        },
         toggleMuteInputChannel(channel: number) {
             const matrixMixerMapping = this.matrixMixer.mapping;
             matrixMixerMapping[channel].sources.every((source) => {
@@ -179,6 +202,12 @@ export const useCamillaDspStore = defineStore('camilladsp', {
             return this.matrixMixer.mapping.map(mapping => {
                 return mapping.sources[0];
             }) as Source[];
+        },
+        pipeline(): PipelineStep[] {
+            return this.dspConfig.pipeline as PipelineStep[] ?? [];
+        },
+        filters(): Object {
+            return this.dspConfig.filters ?? {};
         }
     }
 });

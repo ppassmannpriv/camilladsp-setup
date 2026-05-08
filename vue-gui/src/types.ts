@@ -43,7 +43,7 @@ export interface ProcessorDef {
 
 export interface PipelineStep {
   type: 'Filter' | 'Mixer' | 'Processor';
-  channel?: number;
+  channels?: number[];
   names?: string[];
   name?: string;
   bypassed?: boolean;

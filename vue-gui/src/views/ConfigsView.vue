@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { useCamillaStore } from '../stores/camilla';
-//import { useSocket } from '../composables/useSocket';
+import { useCamillaDspStore } from '../stores/useCamillaDspStore';
 
-const store = useCamillaStore();
-//const { sendCmd } = useSocket();
+const store = useCamillaDspStore();
 
 function loadConfig(name: string) {
   console.log('Loading config:', name);

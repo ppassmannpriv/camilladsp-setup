@@ -22,7 +22,7 @@ function auxFaders() {
 
 function toggleMute(type: 'input' | 'output', idx: number) {
   if (type === 'input') {
-    store.toggleMuteInputChannel(idx);
+    store.toggleMuteInputChannelGroup(idx);
   } else {
     store.toggleMuteOutputChannel(idx);
   }

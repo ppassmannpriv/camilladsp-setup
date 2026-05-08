@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useCamillaStore } from '../stores/camilla';
+import { useCamillaDspStore } from '../stores/useCamillaDspStore';
 
-const store = useCamillaStore();
+const store = useCamillaDspStore();
 
-const pipeline = computed(() => store.config?.pipeline ?? []);
+const pipeline = computed(() => store.pipeline ?? []);
 
 function nodeClass(type: string) {
   if (type === 'Filter')    return 'pipeline-node-filter';
@@ -31,7 +31,7 @@ function nodeColor(type: string) {
       No config loaded
     </div>
 
-    <div v-else class="flex-1 overflow-auto p-3">
+    <div v-else class="flex-1 overflow-auto p-3 flex-wrap">
       <!-- Horizontal scrollable pipeline chain -->
       <div class="flex items-start gap-2 min-w-max pb-2">
         <template v-for="(step, idx) in pipeline" :key="idx">
@@ -58,7 +58,7 @@ function nodeColor(type: string) {
 
             <!-- Filter node -->
             <template v-else-if="step.type === 'Filter'">
-              <div class="text-[10px] text-slate-500 mb-1">ch {{ step.channel }}</div>
+              <div class="text-[10px] text-slate-500 mb-1">ch {{ step.channels }}</div>
               <div
                 v-for="name in step.names" :key="name"
                 class="text-[10px] font-mono text-slate-300 truncate bg-slate-900/50 rounded px-1 py-0.5 mb-0.5"
